@@ -58,3 +58,5 @@ For a project-level VS Code setup, this repo includes `.vscode/mcp.json` with th
 - The app expects PostgreSQL and works well with Neon or similar hosted providers.
 - The checkout flow calculates totals on the server.
 - Admin users can create, edit, and delete products, plus update order status.
+
+# ecommerce
