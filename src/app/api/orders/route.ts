@@ -69,27 +69,42 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid checkout data' }, { status: 400 });
   }
 
+  // Consolidate duplicate items by productId
+  const itemMap = new Map<string, number>();
+  for (const item of parsed.data.items) {
+    itemMap.set(item.productId, (itemMap.get(item.productId) ?? 0) + item.quantity);
+  }
+
+  const uniqueProductIds = Array.from(itemMap.keys());
   const products = await db.product.findMany({
-    where: { id: { in: parsed.data.items.map((item) => item.productId) } }
+    where: { id: { in: uniqueProductIds } }
   });
 
-  if (products.length !== parsed.data.items.length) {
+  if (products.length !== uniqueProductIds.length) {
     return NextResponse.json({ error: 'One or more items are unavailable' }, { status: 400 });
   }
 
   const productById = new Map(products.map((product) => [product.id, product]));
-  for (const item of parsed.data.items) {
-    const product = productById.get(item.productId);
-    if (!product || product.inventory < item.quantity) {
+  for (const [productId, requestedQty] of itemMap.entries()) {
+    const product = productById.get(productId);
+    if (!product || product.inventory < requestedQty) {
       return NextResponse.json({ error: `Not enough inventory for ${product?.name ?? 'an item'}` }, { status: 400 });
     }
   }
 
   const order = await db.$transaction(async (tx) => {
-    const total = parsed.data.items.reduce((sum, item) => {
-      const product = productById.get(item.productId)!;
-      return sum + Number(product.price) * item.quantity;
-    }, 0);
+    let total = 0;
+    const orderItemsData: Array<{ productId: string; quantity: number; price: Prisma.Decimal }> = [];
+
+    for (const [productId, quantity] of itemMap.entries()) {
+      const product = productById.get(productId)!;
+      total += Number(product.price) * quantity;
+      orderItemsData.push({
+        productId,
+        quantity,
+        price: product.price as Prisma.Decimal
+      });
+    }
 
     const created = await tx.order.create({
       data: {
@@ -99,23 +114,16 @@ export async function POST(request: NextRequest) {
         shippingEmail: parsed.data.shippingEmail,
         shippingAddress: parsed.data.shippingAddress,
         items: {
-          create: parsed.data.items.map((item) => {
-            const product = productById.get(item.productId)!;
-            return {
-              productId: item.productId,
-              quantity: item.quantity,
-              price: product.price
-            };
-          })
+          create: orderItemsData
         }
       },
       include: { user: true, items: { include: { product: true } } }
     });
 
-    for (const item of parsed.data.items) {
+    for (const [productId, quantity] of itemMap.entries()) {
       await tx.product.update({
-        where: { id: item.productId },
-        data: { inventory: { decrement: item.quantity } }
+        where: { id: productId },
+        data: { inventory: { decrement: quantity } }
       });
     }
 

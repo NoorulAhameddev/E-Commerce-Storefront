@@ -4,7 +4,15 @@ import { createSessionToken, readSessionToken, verifyPassword, SESSION_COOKIE } 
 import { loginSchema } from '@/lib/validators';
 import { readRequestBody } from '@/lib/body';
 
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+
 export async function POST(request: NextRequest) {
+  const clientIp = getClientIp(request);
+  const limiter = checkRateLimit(`login:${clientIp}`, 10, 60 * 1000);
+  if (!limiter.success) {
+    return NextResponse.json({ error: 'Too many login attempts. Please try again later.' }, { status: 429 });
+  }
+
   const body = await readRequestBody(request);
   const parsed = loginSchema.safeParse(body);
 

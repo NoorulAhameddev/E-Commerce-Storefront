@@ -16,14 +16,14 @@ export default async function HomePage() {
         <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div className="space-y-6">
             <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm text-cyan-200">
-              Basic store, real flow
+              Full-Stack Storefront & Orders System
             </div>
             <div>
               <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-6xl">
-                Launch a storefront with catalog, cart, checkout, and admin control.
+                Modern e-commerce platform with live catalog & order fulfillment.
               </h1>
               <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:text-lg">
-                Shopwave demonstrates the core pieces of an e-commerce app: authenticated checkout, product management, and order tracking backed by Prisma and PostgreSQL.
+                Shopwave provides a production-ready e-commerce experience: customer cart sessions, role-based admin controls, inventory tracking, and database persistence powered by Prisma and PostgreSQL.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -40,12 +40,12 @@ export default async function HomePage() {
             <div className="surface rounded-[1.75rem] p-5">
               <div className="text-sm uppercase tracking-[0.28em] text-slate-400">Products</div>
               <div className="mt-3 text-4xl font-semibold text-white">{products.length}</div>
-              <div className="mt-2 text-sm text-slate-300">Catalog items ready to add to cart.</div>
+              <div className="mt-2 text-sm text-slate-300">Catalog items available for purchase.</div>
             </div>
             <div className="surface rounded-[1.75rem] p-5">
               <div className="text-sm uppercase tracking-[0.28em] text-slate-400">Checkout</div>
               <div className="mt-3 text-4xl font-semibold text-white">Secure</div>
-              <div className="mt-2 text-sm text-slate-300">Role-aware auth protects checkout and admin access.</div>
+              <div className="mt-2 text-sm text-slate-300">Role-aware auth protects customer checkout and admin access.</div>
             </div>
             <div className="surface rounded-[1.75rem] p-5">
               <div className="text-sm uppercase tracking-[0.28em] text-slate-400">Database</div>
@@ -53,9 +53,9 @@ export default async function HomePage() {
               <div className="mt-2 text-sm text-slate-300">Products, orders, and users live in PostgreSQL.</div>
             </div>
             <div className="surface rounded-[1.75rem] p-5">
-              <div className="text-sm uppercase tracking-[0.28em] text-slate-400">Cart total</div>
+              <div className="text-sm uppercase tracking-[0.28em] text-slate-400">Catalog Value</div>
               <div className="mt-3 text-4xl font-semibold text-white">{formatCurrency(products.reduce((total, product) => total + Number(product.price), 0))}</div>
-              <div className="mt-2 text-sm text-slate-300">Example totals rendered with shared formatting.</div>
+              <div className="mt-2 text-sm text-slate-300">Combined value of active product inventory.</div>
             </div>
           </div>
         </div>

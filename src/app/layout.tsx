@@ -9,8 +9,19 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'Shopwave Storefront',
-  description: 'A basic e-commerce storefront with catalog, cart, checkout, auth, and order tracking.'
+  title: 'Shopwave Storefront | Modern E-Commerce Platform',
+  description: 'Full-featured e-commerce storefront with product catalog, cart, secure checkout, and order tracking.',
+  openGraph: {
+    title: 'Shopwave Storefront | Modern E-Commerce Platform',
+    description: 'Full-featured e-commerce storefront with product catalog, cart, secure checkout, and order tracking.',
+    type: 'website',
+    locale: 'en_US'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Shopwave Storefront | Modern E-Commerce Platform',
+    description: 'Full-featured e-commerce storefront with product catalog, cart, secure checkout, and order tracking.'
+  }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

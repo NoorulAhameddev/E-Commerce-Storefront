@@ -18,6 +18,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "test": "tsx tests/unit/verify-store.ts",
     "test:e2e": "playwright test",
     "db:generate": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",

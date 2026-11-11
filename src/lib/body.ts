@@ -1,6 +1,13 @@
 import type { NextRequest } from 'next/server';
 
+const MAX_BODY_SIZE = 1_048_576; // 1MB
+
 export async function readRequestBody(request: NextRequest) {
+  const contentLength = request.headers.get('content-length');
+  if (contentLength && parseInt(contentLength, 10) > MAX_BODY_SIZE) {
+    return null;
+  }
+
   const contentType = request.headers.get('content-type') ?? '';
 
   if (contentType.includes('application/json')) {

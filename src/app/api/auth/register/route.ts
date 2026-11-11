@@ -4,7 +4,15 @@ import { hashPassword, createSessionToken, SESSION_COOKIE } from '@/lib/auth';
 import { registerSchema } from '@/lib/validators';
 import { readRequestBody } from '@/lib/body';
 
+import { checkRateLimit, getClientIp } from '@/lib/rate-limit';
+
 export async function POST(request: NextRequest) {
+  const clientIp = getClientIp(request);
+  const limiter = checkRateLimit(`register:${clientIp}`, 10, 60 * 1000);
+  if (!limiter.success) {
+    return NextResponse.json({ error: 'Too many registration attempts. Please try again later.' }, { status: 429 });
+  }
+
   const body = await readRequestBody(request);
   const parsed = registerSchema.safeParse(body);
 
